@@ -1,0 +1,371 @@
+---
+title: "Me desculpem os tolos, mas visualização é essencial"
+subtitle: "Make me pretty, and then I show the findings!"
+author: "Luís Silva e Silva"
+date: '`r format(as.Date("2020-06-18"), "%dth %B %Y")`'
+output:
+  xaringan::moon_reader:
+    css: ["default", "css/sfah.css", "css/fonts.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      beforeInit: "https://platform.twitter.com/widgets.js"
+    seal: false 
+    includes:
+      in_header: header.html
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(knitr)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+# options(knitr.table.format = "html")
+library(tidyverse)
+library(gt)
+library(fontawesome) # from github: https://github.com/rstudio/fontawesome
+library(DiagrammeR)
+```
+
+layout: true
+
+<div class="my-footer"><span>lgsilvaesilva.github.io/dataviz</span></div>
+
+<!-- this adds the link footer to all slides, depends on my-footer class in css-->
+
+---
+name: xaringan-title
+class: right, middle
+background-image: url(img/kelli-tungay-2LJ4rqK2qfU-unsplash.jpg)
+background-size: cover
+
+# .titleBold[Me desculpem os tolos, mas visualização é essencial]
+### .heatinline[Make me pretty, and then I show the findings!]
+
+.medium[Luís Silva e Silva | dataViz | `r format(Sys.Date(), "%dth %B %Y")`]
+
+<!-- this ends up being the title slide since seal = FALSE-->
+
+---
+
+class: right, middle
+
+<img class="circle" src="img/myphoto.png" width="150px"/>
+
+### Find me at...
+
+[`r fa(name = "twitter")` @lgsilvaesilva](http://twitter.com/lgsilvaesilva)  
+[`r fa(name = "github")` @lgsilvaesilva](http://github.com/lgsilvaesilva)  
+[`r fa(name = "link")` lgsilvaesilva.github.io](https://lgsilvaesilva.github.io)  
+[`r fa(name = "paper-plane")` lgsilvaesilva@gmail.com](mailto:lgsilvaesilva@gmail.com)
+
+---
+name: whatviz
+class: center, top, inverse
+background-image: url(img/jess-bailey-l3N9Q27zULw-unsplash.jpg)
+background-size: cover
+
+# .salt[WHAT is <br> data <br> visualization?]
+
+---
+name: define_viz
+class: left, middle, inverse
+
+# .heatinline[WHAT?]
+# _"Visual (interactive) representation of information to help people make sense of complex phenomena through data."_
+
+.footnote[Bertini, Enrico. Professor at NYU Tandon School of Engineering]
+
+---
+name: my_define_viz
+class: center, middle, inverse
+
+# .left[.heatinline[WHAT?]]
+
+## Data Visualization is the map <br> $f:D\rightarrow G$, <br> where $D$ is the data available, and $G$ is a set of graphics thatmakes $D$ more accessible, understandable and usable.
+
+---
+class: right, middle, inverse
+background-image: url(img/pen_yellow.jpg)
+background-size: cover
+
+# .large[Example]
+
+---
+name: ex_data
+
+## AidData: Financial aids around the world 
+
+```{r ex_whatviz, cache=TRUE, highlight.output = 1, eval=require(data.table)}
+data_url <- "https://bit.ly/2WTjXwM"
+dt <- fread(data_url)
+str(dt)
+```
+
++ Count distinct values for each variable 
+
+```{r}
+dt[, lapply(.SD, uniqueN), .SDcols = !"sum_amount_usd_constant"]
+```
+
+
+---
+name: ex_webpage
+
+<iframe src="http://aiddata.herokuapp.com/" width="100%" height="90%" frameBorder = "0"></iframe>
+
+.footnote[http://aiddata.herokuapp.com/]
+
+---
+name: whyviz
+class: center, middle, inverse
+
+# Why <br> .fat[data visualization] <br> matters?
+
+---
+name: why_insight
+class: left, bottom, inverse
+background-image: url(img/insight.jpg)
+background-size: cover
+
+---
+template: why_insight
+
+# .fancy[.salt[Insights]]
+
+---
+template: why_insight
+
+# .fancy[.salt[Hypothesis Testing]]
+
+---
+template: why_insight
+
+## .fancy[.salt[Exploratory Data Analysis]]
+
+---
+name: snow
+class: middle, center
+
+### .left[John Snow Map: cholera outbreak, London, 1854]
+
+.pull-left[
+
+<img src="img/cholera_map.jpg" width="80%" align="center" border="1"/>
+
+Original map by John Snow showing the clusters of cholera cases in the London epidemic of 1854.
+
+]
+
+--
+
+.pull-right[
+<img src="img/jon_snow_got.png" width="50%" align="center" border="1"/>
+]
+
+---
+template: snow
+
+.pull-right[
+<img src="img/john_snow.jpg" width="50%" align="center" border="1"/>
+.left[
++ British (1813 - 1858)
++ Physician
+]
+]
+
+---
+template: snow
+
+.pull-right[
+<img src="img/snow-zoom.jpg" width="80%" align="center" border="1"/>
+]
+
+---
+template: whyviz
+
+---
+name: why_anscombe
+class: right, middle
+background-image: url(img/calculator.jpg)
+background-size: cover
+
+.pull-right[
+## The .fancy[.heatinline[descriptive statistics is not enough]] to tell the whole data story.
+]
+
+
+---
+name: anscombe
+class: top, center
+
+## Hidden correlations
+
+.pull-left[
+```{r r_anscombe, echo=FALSE}
+library(datasauRus)
+dt_ex <- datasaurus_dozen %>%
+  filter(
+    dataset %in% c("dino", "star", "circle", "wide_lines")
+  ) %>%
+  mutate(
+    dataset = as.numeric(factor(dataset, levels = c("dino", "star", "circle", "wide_lines")))
+  ) %>%
+  group_by(dataset) %>%
+  summarise(
+    mean_x    = mean(x),
+    mean_y    = mean(y),
+    std_dev_x = sd(x),
+    std_dev_y = sd(y),
+    corr_x_y  = cor(x, y)
+  )
+
+dt_ex %>%
+  gt() %>%
+  tab_spanner(
+    label = "Mean",
+    columns = vars(mean_x, mean_y)
+  ) %>%
+  tab_spanner(
+    label = "Stand. Deviation",
+    columns = vars(std_dev_x, std_dev_y)
+  ) %>%
+  cols_label(
+    mean_x = "X",
+    mean_y = "Y",
+    std_dev_x = "X",
+    std_dev_y = "Y",
+    dataset = "Dataset",
+    corr_x_y = "Corr."
+  ) %>%
+  fmt_number(
+    columns = vars(mean_x, mean_y, std_dev_x, std_dev_y, corr_x_y), 
+    decimals = 1
+  )
+```
+
+- .left[Linear Regression: ]
+
+$$y = 53 - 0.10\times x$$
+
+.footnote[R package `datasauRus` inspired by Anscombe's Quartet - `anscombe`]
+]
+
+--
+
+.pull-right[
+```{r plot_dino, out.width='80%', fig.align='top', dev='svg', echo=FALSE, dpi=300, strip.white=TRUE}
+dataset_list <- c("dino", "star", "circle", "wide_lines")
+datasaurus_dozen %>%
+  filter(dataset %in% dataset_list) %>%
+  mutate(
+    dataset = factor(dataset, 
+                     levels = dataset_list, 
+                     labels = paste(1:length(dataset_list), dataset_list, sep = ": "))
+  ) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point(color = "#0097FF") +
+  theme_light() +
+  theme(strip.text = element_text(size = 18)) +
+  facet_wrap(~dataset)
+```
+]
+
+---
+template: whyviz
+
+---
+name: why_comunicate
+class: center, bottom, inverse
+background-image: url(img/speaker.jpg)
+background-size: cover
+
+---
+template: why_comunicate
+
+# .large[Comunicate]
+
+---
+template: why_comunicate
+
+# .large[Persuasion]
+
+---
+name: nightingale
+class: center, middle
+
+### Diagram of the causes of mortality in the army in the East Florence Nightingale
+.left-column[
+<br>
+<img src="img/florence_nightingale.jpg" width="80%" align="center" border="1"/>
+
+.left[
++ Statistician (1820 - 1910)
++ 1859: First female member of the Royal Statistical Society. 
++ 1874: American Statistical Association.]
+]
+
+.right-column[
+<img src="img/nightingale-mortality.jpg" width="90%" align="center" border="1"/>
+]
+
+---
+template: whyviz
+
+---
+name: why_story
+class: center, middle, inverse
+background-image: url(img/storytelling.jpg)
+background-size: cover
+
+---
+template: why_story
+
+# Storytelling
+
+---
+name: minard
+class: center, middle
+
+### Charles Minard's map of Napoleon's disastrous Russian campaign of 1812
+.left-column[
+<br>
+<img src="img/minard_man.png" width="90%" align="center" border="1"/>
+
+.left[
++ Civil Engineer 
++ French
++ 1781 - 1870
+]
+
+]
+
+.right-column[
+<img src="img/minard_map.png" width="90%" align="center" border="1"/>
+]
+
+---
+name: type_viz
+class: left, top, inverse
+
+# Data Visualization
+
+
+.left[
+.large[
+1. Exploratory Data Analysis `r emo::ji("spanner")` 
+
+1. Communication (internal/external) `r emo::ji("speaking")`
+
+1. Scaling up (dashboard; automatic report) `r emo::ji("screen")`
+]
+]
+
+
+
+
+
+
+
+
