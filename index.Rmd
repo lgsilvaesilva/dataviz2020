@@ -82,7 +82,7 @@ class: center, middle, inverse
 
 # .left[.heatinline[WHAT?]]
 
-## Data Visualization is the map <br> $f:D\rightarrow G$, <br> where $D$ is the data available, and $G$ is a set of graphics thatmakes $D$ more accessible, understandable and usable.
+## Data Visualization is the map <br> $f:D\rightarrow G$, <br> where $D$ is the data available, and $G$ is a set of graphics that makes $D$ more accessible, understandable and usable.
 
 ---
 class: right, middle, inverse
