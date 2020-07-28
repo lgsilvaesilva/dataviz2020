@@ -1,3 +1,8 @@
+.pull-rightnote {
+  float: right;
+  width: 43%;
+}
+
 :root {
   --color-salt: #61acf0; /* blue */
   --color-fat: #f0a561; /* orange */
