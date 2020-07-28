@@ -112,7 +112,7 @@ dt[, lapply(.SD, uniqueN), .SDcols = !"sum_amount_usd_constant"]
 ---
 name: ex_webpage
 
-<!-- <iframe src="http://aiddata.herokuapp.com/" width="100%" height="90%" frameBorder = "0", loading = "lazy"></iframe> -->
+<iframe src="http://aiddata.herokuapp.com/" width="100%" height="90%" frameBorder = "0", loading = "lazy"></iframe>
 
 .footnote[http://aiddata.herokuapp.com/]
 
